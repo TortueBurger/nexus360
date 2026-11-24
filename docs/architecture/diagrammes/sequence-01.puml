@@ -1,0 +1,46 @@
+@startuml sequence-01
+' Séquence : affecter un consultant à une mission (cas d'usage principal de Staffing).
+' Ordre : charger, faire décider la racine, enregistrer, publier.
+' Les participants portent les noms du diagramme de composants.
+actor "Chargé de staffing" as acteur
+participant "StaffingApiHttp" as entree
+participant "AffecterConsultantService" as uc
+participant "DemandeClientRepository" as repoDemande
+participant "PlanningConsultantRepository" as repo
+participant "ProfilConsultantProvider" as profil
+participant "PlanningConsultant" as agg
+participant "PublieurEvenements" as pub
+
+acteur -> entree : affecter le consultant C à la demande D
+entree -> uc : affecter(demandeId, consultantId, prix)
+
+' 1. Charger
+uc -> repoDemande : charger(demandeId)
+repoDemande --> uc : DemandeClient (exigences, période, taux)
+uc -> repo : charger(consultantId)
+repo --> uc : PlanningConsultant
+uc -> profil : profilDe(consultantId)
+profil --> uc : ProfilConsultant (compétences, habilitation, coût)
+
+' 2. Décider : c'est la racine qui vérifie R1 à R4
+uc -> agg : affecter(exigences, période, taux, prix, profil)
+
+alt cas nominal : R1, R2, R3 et R4 respectées
+  agg --> uc : AffectationConfirmee
+  ' 3. Enregistrer
+  uc -> repo : enregistrer(planning)
+  ' 4. Publier
+  uc -> pub : publier(AffectationConfirmee)
+  uc --> entree : affectation confirmée
+  entree --> acteur : 201 Créée
+else règle métier non respectée (charge > 100 %, compétence, habilitation ou marge)
+  agg --> uc : AffectationRefusee (règle violée)
+  uc --> entree : refus métier
+  entree --> acteur : 422 Refusée avec la règle en cause
+end
+
+note over pub
+  La demande est marquée pourvue plus tard, par la politique
+  "quand AffectationConfirmee, alors marquerPourvue" (cohérence à terme).
+end note
+@enduml

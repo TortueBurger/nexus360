@@ -1,0 +1,45 @@
+@startuml context-map
+' Context map de Nexus360 : flèche amont -> aval, relation en libellé.
+skinparam componentStyle uml2
+
+package "Staffing (CŒUR)" as staffing {
+}
+package "Suivi d'activité (support)" as suivi {
+}
+package "Facturation (support)" as facturation {
+}
+package "Notifications (générique)" as notif {
+}
+package "Signature électronique (générique)" as signature {
+}
+package "Identité et accès (générique)" as identite {
+}
+
+rectangle "SIRH" as sirh
+rectangle "Grands comptes clients" as clients
+rectangle "Sous-traitants" as soustraitants
+rectangle "Outil de paie" as paie
+rectangle "Plateforme de facturation électronique" as pfe
+rectangle "Logiciel comptable" as compta
+rectangle "Banque" as banque
+rectangle "Plateforme de signature" as pfs
+rectangle "Active Directory" as ad
+rectangle "GesMiss (remplacé)" as gesmiss
+
+sirh --> staffing : ACL
+clients --> staffing : ACL
+soustraitants --> staffing : ACL
+clients --> suivi : ACL
+staffing --> suivi : client-fournisseur
+suivi --> facturation : client-fournisseur
+suivi --> paie : conformiste
+pfe --> facturation : ACL
+compta --> facturation : conformiste
+banque --> facturation : conformiste
+notif --> staffing : conformiste
+notif --> suivi : conformiste
+pfs --> staffing : ACL
+ad --> identite : conformiste
+identite --> staffing : conformiste
+gesmiss ..> staffing : remplacé
+@enduml

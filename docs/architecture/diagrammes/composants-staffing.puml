@@ -1,0 +1,92 @@
+@startuml composants-staffing
+' Hexagone du contexte cœur Staffing.
+'   interface "Nom" as alias   -> un port
+'   [Composant] -up- alias     -> fournit (implémente) le port
+'   [Composant] --> alias      -> requiert (utilise) le port
+' Toutes les flèches pointent vers le centre : aucune ne part du domaine vers un adapter.
+skinparam componentStyle uml2
+
+package "Adapters primaires" {
+  [StaffingApiHttp] as api
+  [ClientApiAdapter] as clientApi
+  [PlanificateurCloture] as planif
+}
+
+package "Hexagone - Staffing" {
+  interface "AffecterConsultant" as pAffecter
+  interface "ProposerConsultant" as pProposer
+  interface "DeposerDemande" as pDeposer
+  interface "ClotureDemandesSansProposition" as pCloture
+
+  [AffecterConsultantService] as ucAffecter
+  [ProposerConsultantService] as ucProposer
+  [DeposerDemandeService] as ucDeposer
+  [ClotureDemandesService] as ucCloture
+
+  [PlanningConsultant (aggregate)] as planning
+  [DemandeClient (aggregate)] as demande
+
+  interface "PlanningConsultantRepository" as sPlanning
+  interface "DemandeClientRepository" as sDemande
+  interface "ProfilConsultantProvider" as sProfil
+  interface "PublieurEvenements" as sPublieur
+  interface "Horloge" as sHorloge
+}
+
+package "Adapters secondaires" {
+  [PlanningConsultantRepositoryPostgres] as planningPg
+  [PlanningConsultantRepositoryEnMemoire] as planningMem
+  [DemandeClientRepositoryPostgres] as demandePg
+  [DemandeClientRepositoryEnMemoire] as demandeMem
+  [ProfilConsultantSirhAdapter] as profilSirh
+  [ProfilConsultantEnMemoire] as profilMem
+  [PublieurEvenementsBus] as pubBus
+  [PublieurEvenementsEnMemoire] as pubMem
+  [HorlogeSysteme] as horlogeSys
+  [HorlogeFixe] as horlogeFixe
+}
+
+' Adapters primaires -> ports primaires
+api --> pAffecter
+api --> pProposer
+api --> pDeposer
+clientApi --> pDeposer
+planif --> pCloture
+
+' Les cas d'usage fournissent les ports primaires
+ucAffecter -up- pAffecter
+ucProposer -up- pProposer
+ucDeposer -up- pDeposer
+ucCloture -up- pCloture
+
+' Les cas d'usage utilisent le domaine et les ports secondaires
+ucAffecter --> planning
+ucAffecter --> demande
+ucProposer --> demande
+ucDeposer --> demande
+ucCloture --> demande
+
+ucAffecter --> sPlanning
+ucAffecter --> sDemande
+ucAffecter --> sProfil
+ucAffecter --> sPublieur
+ucProposer --> sDemande
+ucProposer --> sPublieur
+ucDeposer --> sDemande
+ucDeposer --> sPublieur
+ucCloture --> sDemande
+ucCloture --> sPublieur
+ucCloture --> sHorloge
+
+' Les adapters secondaires implémentent les ports secondaires
+planningPg -up- sPlanning
+planningMem -up- sPlanning
+demandePg -up- sDemande
+demandeMem -up- sDemande
+profilSirh -up- sProfil
+profilMem -up- sProfil
+pubBus -up- sPublieur
+pubMem -up- sPublieur
+horlogeSys -up- sHorloge
+horlogeFixe -up- sHorloge
+@enduml
