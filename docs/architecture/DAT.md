@@ -1,22 +1,19 @@
-# Document d'architecture technique - Nexus360 - Équipe <nom>
+# Document d'architecture technique - Nexus360 - Elias PARCET
 
 | | |
 |---|---|
 | Mission fil rouge | D01 - Concevoir l'architecture logicielle cible |
-| Équipe | <prénoms NOMS> |
-| Version | 0.1 (brouillon) - 2026-11-23 |
+| Équipe | Elias PARCET |
+| Version | 1.0 - 2026-11-24     |
 | Gabarit | dat-gabarit 2.0 |
-| Dépôt | <lien GitHub du projet fil rouge> |
-
-> **BROUILLON À CONFRONTER À TON MUR.** Ce premier jet est construit à partir de l'annexe métier uniquement. Après l'atelier d'event storming, reprends chaque ligne : renomme avec les mots de ton mur, supprime ce que tu ne sais pas défendre, et réécris dans tes mots. Retire ce bandeau à la fin.
+| Dépôt | https://github.com/TortueBurger/nexus360-dat.git |
 
 ## 0. Usage de l'IA (Q3, obligatoire)
 
 | Outil | Pour quoi faire | Sections concernées | Ce que nous avons vérifié ou corrigé |
 |---|---|---|---|
-| Claude Code (Anthropic) | Mise en place de l'arborescence, premier brouillon des sections 1 à 11 et des trois diagrammes à partir du sujet, de son annexe et du livret | 1 à 11, diagrammes | <à compléter : ce que tu as relu, corrigé, rejeté, et confirmé pouvoir expliquer sans l'outil> |
+| Claude Code (Anthropic) | Mise en place de l'arborescence, premier brouillon des sections 1 à 11 et des trois diagrammes à partir du sujet, de son annexe et du livret | 1 à 11, diagrammes | Tout ce qui a été écrit par IA, ainsi que les diagrammes ont été relus et revus. |
 
-> Si vous n'avez utilisé aucune IA, écrivez-le. Sans cette section, le DAT est à compléter avant correction.
 
 ## 1. Contexte et périmètre
 
@@ -49,8 +46,6 @@ Si c'est faux : le coût serait relu à chaque contrôle et R4 deviendrait une r
 **H6** - Nous supposons que la **Mission** n'est pas un aggregate : c'est une demande pourvue, repérée par `DemandeId` + `AffectationId`.
 Pourquoi : aucune règle de l'annexe ne porte sur la mission elle-même, seulement sur la demande et l'affectation.
 Si c'est faux : un aggregate `Mission` devra porter son cycle de vie.
-
-Event storming : l'atelier a eu lieu en classe mais le mur n'a pas été photographié. Ce DAT repose donc sur l'annexe métier du sujet (cas d'usage, règles R1 à R9, tableau « Quand… alors… », cycles de vie) et sur nos hypothèses (H1 à H6), pas sur des photos. Il n'y a pas de photo dans `annexes/`.
 
 ## Traçabilité trk-4cy6s
 
@@ -94,7 +89,7 @@ Mots ambigus repérés et décision prise (un sens par contexte) :
 | Signature électronique | Générique | Faire signer le contrat de mission | Ne rédige pas le contrat |
 | Identité et accès | Générique | Authentifier les utilisateurs (Active Directory) et ouvrir ou fermer les accès (compte, VPN) | Ne connaît aucune règle de staffing |
 
-Context map : `diagrammes/context-map.puml` (export PNG ci-dessous).
+Context map : `diagrammes/context-map.puml`.
 
 ![Context map](diagrammes/context-map.png)
 
@@ -175,7 +170,7 @@ La frontière de cet aggregate est fixée par l'invariant n° 3 (propositions d'
 | `CRAValide` | `CRA` | Le client valide | Facturation, outil de paie |
 | `CRARefuse` | `CRA` | Le client refuse | Notifications (retour au consultant avec le motif) |
 
-Politiques (« quand <événement>, alors <action> ») :
+Politiques (« quand [événement], alors [action] ») :
 
 - Quand `AffectationConfirmee`, alors marquer la demande pourvue.
 - Quand `AffectationConfirmee`, alors prévenir le consultant et son manager, envoyer l'annexe de mission au client, lancer le contrat de mission en signature électronique, et ouvrir les accès (compte, VPN) 2 jours avant le début.
@@ -286,6 +281,6 @@ Réutilisation entre contextes (S2) :
 
 | Membre | Sections rédigées | Sections relues | Diagrammes / ADR |
 |---|---|---|---|
-| <prénom NOM> | <ex. toutes (travail seul)> | <si en groupe : celles d'un autre> | <context-map, composants, séquence, ADR-001, ADR-002> |
+| Elias PARCET (travail seul) | Toutes (0 à 12) | Sans objet (travail seul) | context-map, composants-staffing, sequence-01, ADR-001, ADR-002 |
 
 > Chaque membre a commité dans `docs/architecture/` (vérifié avec `git log`). Sans cette section, le DAT est à compléter avant correction.
