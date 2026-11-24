@@ -29,7 +29,6 @@ docs/architecture/
 │   ├── ADR-001.md                  PlanningConsultant garde la charge (R1)
 │   └── ADR-002.md                  réutilisation entre contextes
 └── annexes/                        pièces annexes (event storming)
-Questions_TP.md                     exercices du livret, avec les réponses
 ```
 
 ## Lire le DAT

@@ -6,7 +6,7 @@
 | Équipe | Elias PARCET |
 | Version | 1.0 - 2026-11-24     |
 | Gabarit | dat-gabarit 2.0 |
-| Dépôt | https://github.com/TortueBurger/nexus360-dat.git |
+| Dépôt | https://github.com/TortueBurger/nexus360 |
 
 ## 0. Usage de l'IA (Q3, obligatoire)
 
